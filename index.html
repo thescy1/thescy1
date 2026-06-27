@@ -1,0 +1,2362 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>_</title>
+
+    <link rel="icon" type="image/gif" href="images/3d-money-rotating.gif">
+
+    <meta property="og:title" content="♡ ℙ�𝕝�𝕖 𝕠𝕨𝕟𝕤 𝕪𝕠𝕦 ♡">
+    <meta property="og:description" content="⠀⠀⠀⠀⡀⢄⡆⣝⠤⠅⠂⠀⠀⠀⢀⢄⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⢠⡒⢒⡦⣒⠀⡀⠀⠀⠀⠀">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="theme-color" content="#b01030">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.06);
+            --red-deep: #3d0011;
+            --red: #b01030;
+            --red-bright: #d01535;
+            --red-glow: rgba(176, 16, 48, 0.2);
+            --text: #e8e8e8;
+            --text-dim: rgba(255, 255, 255, 0.4);
+            --text-muted: rgba(255, 255, 255, 0.15);
+            --font-display: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+        }
+
+        html {
+            cursor: none;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 50% 40%, #100a0b, #0a0a0a 50%, #060606);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-mono);
+            overflow-x: hidden;
+            overflow-y: auto;
+            color: var(--text);
+            cursor: none;
+        }
+
+        /* ═══ GATE ═══ */
+        .gate {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 6, 6, 0.92);
+            cursor: none;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.8s,
+                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gate.hidden {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.03);
+            pointer-events: none;
+        }
+
+        .gate-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .gate-glyph {
+            font-family: var(--font-display);
+            font-size: 52px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -1px;
+            user-select: none;
+        }
+
+        .gate-divider {
+            width: 0;
+            height: 1px;
+            background: var(--red);
+            opacity: 0;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s ease;
+        }
+
+        .gate-divider.visible {
+            width: 60px;
+            opacity: 0.4;
+        }
+
+        .gate-prompt {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 4px;
+            text-transform: lowercase;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            user-select: none;
+        }
+
+        .gate-prompt.visible {
+            animation: gate-sha256 2.5s ease-in-out infinite;
+        }
+
+        @keyframes gate-sha256 {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* ═══ CURSOR ═══ */
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--red-bright);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.15s, height 0.15s, background 0.15s, border 0.15s;
+            box-shadow: 0 0 6px var(--red-glow);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            background: var(--red);
+        }
+
+        .cursor-dot.hover {
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border: 1px solid var(--red);
+            box-shadow: 0 0 15px var(--red-glow);
+        }
+
+        /* ═══ OVERLAYS ═══ */
+        .grain {
+            position: fixed;
+            inset: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: 500;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 128px 128px;
+            animation: grain-shift 0.3s steps(1) infinite;
+        }
+
+        @keyframes grain-shift {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(-5%, -5%);
+            }
+
+            50% {
+                transform: translate(3%, -3%);
+            }
+
+            75% {
+                transform: translate(-3%, 5%);
+            }
+        }
+
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 499;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.02) 2px,
+                    rgba(0, 0, 0, 0.02) 4px);
+        }
+
+        .mouse-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(176, 16, 48, 0.025) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+        }
+
+        canvas#particles {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ═══ FLOATING TERMINALS ═══ */
+        .term-float {
+            position: fixed;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(8px) rotate(0deg);
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .term-float.visible {
+            animation: term-boot 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes term-boot {
+            0% {
+                opacity: 0;
+                transform: translateY(8px) rotate(var(--rot, 0deg)) scaleY(0.3);
+                filter: brightness(3) blur(2px);
+            }
+
+            15% {
+                opacity: 0.6;
+                transform: translateY(2px) rotate(var(--rot, 0deg)) scaleY(1.05);
+                filter: brightness(2) blur(0.5px);
+            }
+
+            25% {
+                opacity: 0.15;
+                filter: brightness(1) blur(0);
+            }
+
+            40% {
+                opacity: 0.85;
+                transform: translateY(-1px) rotate(var(--rot, 0deg)) scaleY(1);
+            }
+
+            55% {
+                opacity: 0.3;
+            }
+
+            70% {
+                opacity: 0.95;
+            }
+
+            85% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotate(var(--rot, 0deg)) scaleY(1);
+                filter: brightness(1) blur(0);
+            }
+        }
+
+        .term-float.visible .term-word {
+            animation: term-word-glitch 4.5s ease-in-out infinite var(--glitch-delay, 0s);
+        }
+
+        .term-path {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-bottom: 7px;
+            text-transform: lowercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .term-path::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--red);
+            flex-shrink: 0;
+            animation: term-dot-sha256 3s ease-in-out infinite;
+            box-shadow: 0 0 4px var(--red-glow);
+        }
+
+        @keyframes term-dot-thescy {
+
+            0%,
+            100% {
+                opacity: 0.25;
+                box-shadow: 0 0 3px transparent;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                box-shadow: 0 0 8px var(--red-glow), 0 0 18px rgba(176, 16, 48, 0.12);
+                transform: scale(1.2);
+            }
+        }
+
+        .term-accent {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--red), rgba(176, 16, 48, 0.3), transparent);
+            opacity: 0.4;
+            margin-bottom: 10px;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+        }
+
+        .term-float.visible .term-accent {
+            width: 40px;
+        }
+
+        .term-word {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: -0.3px;
+            line-height: 1.3;
+            margin-bottom: 5px;
+            position: relative;
+            text-shadow: 0 0 15px rgba(176, 16, 48, 0.18), 0 0 40px rgba(176, 16, 48, 0.06);
+        }
+
+        @keyframes term-word-glitch {
+
+            0%,
+            79% {
+                transform: translate(0) skewX(0);
+                text-shadow: 0 0 15px rgba(176, 16, 48, 0.18), 0 0 40px rgba(176, 16, 48, 0.06);
+                filter: brightness(1);
+            }
+
+            80% {
+                filter: brightness(1.6);
+                text-shadow: 0 0 20px rgba(176, 16, 48, 0.5), 0 0 50px rgba(176, 16, 48, 0.15);
+            }
+
+            82% {
+                filter: brightness(1);
+            }
+
+            84% {
+                transform: translate(-3px, -1px) skewX(-2deg);
+                text-shadow: 3px 0 var(--red), -3px 0 rgba(40, 80, 140, 0.6);
+                filter: brightness(1.3);
+            }
+
+            85.5% {
+                transform: translate(2px, 1px) skewX(1.5deg);
+                filter: brightness(0.8);
+            }
+
+            87% {
+                transform: translate(0) skewX(0);
+                filter: brightness(1);
+            }
+
+            100% {
+                transform: translate(0) skewX(0);
+                filter: brightness(1);
+            }
+        }
+
+        .term-def {
+            color: var(--red);
+            font-size: 9px;
+            line-height: 1.6;
+            font-family: var(--font-mono);
+            max-width: 100%;
+            text-shadow: 0 0 10px rgba(176, 16, 48, 0.12);
+            animation: term-breathe 3.5s ease-in-out infinite;
+        }
+
+        @keyframes term-breathe {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* ═══ LAYOUT ═══ */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ═══ CARD ═══ */
+        .card-outer {
+            width: 100%;
+            position: relative;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.06) 0%,
+                    rgba(255, 255, 255, 0.015) 50%,
+                    rgba(255, 255, 255, 0.04) 100%);
+        }
+
+        .card {
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            border-radius: 19px;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ═══ DECO ═══ */
+        .deco-top {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 9px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .deco-tag {
+            color: var(--red);
+            opacity: 0.5;
+        }
+
+        .deco-coords {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ═══ AVATAR ═══ */
+        .avatar-section {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .avatar-ring {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            padding: 2px;
+            position: relative;
+            background: linear-gradient(135deg, #2a0008, #4a0012, #6a001a, #2a0008);
+            background-size: 300% 300%;
+            animation: gradient-spin 6s ease-in-out infinite;
+        }
+
+        @keyframes gradient-spin {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--bg);
+            object-fit: cover;
+            display: block;
+            position: relative;
+        }
+
+        .avatar-glitch-layer {
+            position: absolute;
+            inset: 2px;
+            border-radius: 50%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2.5px solid var(--bg);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .status-indicator.online {
+            background: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+        }
+
+        .status-indicator.idle {
+            background: #eab308;
+            box-shadow: 0 0 8px rgba(234, 179, 8, 0.3);
+        }
+
+        .status-indicator.dnd {
+            background: var(--red-bright);
+            box-shadow: 0 0 8px var(--red-glow);
+        }
+
+        .status-indicator.offline {
+            background: #444;
+        }
+
+        /* ═══ PROFILE ═══ */
+        .profile-info {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .username-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .username {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+
+        .username-glitch {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 32px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            letter-spacing: -0.5px;
+            overflow: hidden;
+        }
+
+        .username-glitch:nth-child(2) {
+            color: var(--red);
+            animation: glitch-1 6s ease-in-out infinite;
+            clip-path: inset(0 0 60% 0);
+        }
+
+        .username-glitch:nth-child(3) {
+            color: #1a0005;
+            animation: glitch-2 6s ease-in-out infinite;
+            clip-path: inset(55% 0 0 0);
+        }
+
+        /* ═══ PROFILE SWITCHING GLITCH ═══ */
+        .card.switching {
+            animation: card-glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        @keyframes card-glitch {
+            0% { transform: translate(0) scale(1); filter: brightness(1) hue-rotate(0deg); }
+            20% { transform: translate(-5px, 2px) scale(1.02); filter: brightness(1.5) hue-rotate(90deg) contrast(1.5); }
+            40% { transform: translate(5px, -2px) scale(0.98); filter: brightness(0.8) hue-rotate(-90deg) grayscale(0.5); }
+            60% { transform: translate(-3px, -1px) scale(1.01); filter: brightness(1.2) hue-rotate(45deg); }
+            80% { transform: translate(3px, 1px) scale(0.99); filter: brightness(0.9) hue-rotate(-45deg); }
+            100% { transform: translate(0) scale(1); filter: brightness(1) hue-rotate(0deg); }
+        }
+
+        .avatar-section.switching {
+             animation: avatar-glitch 0.3s steps(2) infinite;
+        }
+
+        @keyframes avatar-glitch {
+            0% { transform: translate(0); clip-path: inset(0 0 0 0); }
+            33% { transform: translate(-4px, 2px); clip-path: inset(10% 0 40% 0); }
+            66% { transform: translate(4px, -2px); clip-path: inset(60% 0 5% 0); }
+            100% { transform: translate(0); clip-path: inset(0 0 0 0); }
+        }
+
+        @keyframes glitch-1 {
+
+            0%,
+            87%,
+            100% {
+                transform: translate(0);
+                opacity: 0;
+            }
+
+            88% {
+                transform: translate(-4px, -2px);
+                opacity: 0.6;
+            }
+
+            89% {
+                transform: translate(3px, 1px);
+                opacity: 0;
+            }
+
+            90% {
+                transform: translate(-2px, 0);
+                opacity: 0.4;
+            }
+
+            91% {
+                transform: translate(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes glitch-2 {
+
+            0%,
+            87%,
+            100% {
+                transform: translate(0);
+                opacity: 0;
+            }
+
+            89% {
+                transform: translate(4px, 2px);
+                opacity: 0.6;
+            }
+
+            90% {
+                transform: translate(-3px, -1px);
+                opacity: 0;
+            }
+
+            91.5% {
+                transform: translate(2px, 0);
+                opacity: 0.4;
+            }
+
+            92% {
+                transform: translate(0);
+                opacity: 0;
+            }
+        }
+
+        .bio {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            max-width: 300px;
+            min-height: 1.6em;
+        }
+
+        .bio .cursor-blink {
+            display: inline-block;
+            width: 1.5px;
+            height: 0.85em;
+            background: var(--red);
+            margin-left: 2px;
+            vertical-align: baseline;
+            position: relative;
+            top: 1.5px;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* ═══ DIVIDER ═══ */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(176, 16, 48, 0.15), transparent);
+            margin: 4px 0 20px 0;
+            position: relative;
+        }
+
+        .divider::after {
+            content: '//';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.95);
+            padding: 0 12px;
+            font-size: 10px;
+            color: var(--red);
+            opacity: 0.35;
+            letter-spacing: 2px;
+        }
+
+        /* ═══ MUSIC PLAYER ═══ */
+        .music-player {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(176, 16, 48, 0.04);
+            border: 1px solid rgba(176, 16, 48, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            cursor: none;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .music-player:hover {
+            background: rgba(176, 16, 48, 0.06);
+            border-color: rgba(176, 16, 48, 0.2);
+        }
+
+        .music-album {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            background: var(--red-deep);
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .music-album img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .music-album::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.3) 100%);
+            pointer-events: none;
+        }
+
+        .music-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .music-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            font-family: var(--font-display);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-artist {
+            font-size: 10px;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-progress {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .music-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--red);
+            border-radius: 2px;
+            transition: width 0.3s linear;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .music-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(176, 16, 48, 0.12);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .music-btn:hover {
+            background: rgba(176, 16, 48, 0.25);
+            transform: scale(1.05);
+        }
+
+        .music-btn:active {
+            transform: scale(0.95);
+        }
+
+        .music-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--red);
+        }
+
+        .music-time {
+            font-size: 9px;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            min-width: 32px;
+            text-align: right;
+        }
+
+        .music-spotify {
+            font-size: 8px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        .music-spotify svg {
+            width: 10px;
+            height: 10px;
+            fill: #1DB954;
+        }
+
+        /* ═══ LINKS ═══ */
+        .links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .link-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            padding: 13px 16px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: var(--text);
+            font-size: 13px;
+            position: relative;
+            overflow: hidden;
+            cursor: none;
+            transition: border-color 0.4s ease, background 0.4s ease;
+        }
+
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            background: linear-gradient(90deg, rgba(176, 16, 48, 0.05) 0%, transparent 100%);
+        }
+
+        .link-btn:hover::before {
+            opacity: 1;
+        }
+
+        .link-btn:hover {
+            border-color: rgba(176, 16, 48, 0.2);
+        }
+
+        .link-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.015), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .link-btn:hover::after {
+            left: 100%;
+        }
+
+        body {
+            background-color: #050505;
+            color: var(--text);
+            font-family: var(--font-main);
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .link-btn:active {
+            transform: scale(0.98);
+        }
+
+        .link-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            background: rgba(176, 16, 48, 0.08);
+        }
+
+        .link-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--red);
+        }
+
+        .link-text {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .link-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: var(--font-display);
+        }
+
+        .link-handle {
+            font-size: 10px;
+            color: var(--text-dim);
+            transition: color 0.3s ease;
+        }
+
+        .link-arrow {
+            position: relative;
+            z-index: 1;
+            font-size: 10px;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            letter-spacing: -2px;
+        }
+
+        .link-btn:hover .link-arrow {
+            color: var(--red);
+            letter-spacing: 0px;
+        }
+
+        .scramble-text {
+            display: inline-block;
+        }
+
+        /* ═══ PROJECTS SECTION ═══ */
+        .projects-section {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .projects-title {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .projects-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        .project-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(176, 16, 48, 0.04);
+            border: 1px solid rgba(176, 16, 48, 0.1);
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.3s, background 0.3s, transform 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: rgba(176, 16, 48, 0.25);
+            background: rgba(176, 16, 48, 0.08);
+            transform: translateX(4px);
+        }
+
+        .project-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--red-deep), var(--red));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .project-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .project-name {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-status {
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .project-status.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .project-status.wip {
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+        }
+
+        .project-desc {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        .project-arrow {
+            color: var(--text-muted);
+            font-size: 10px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .project-card:hover .project-arrow {
+            color: var(--red);
+            transform: translateX(4px);
+        }
+
+        /* ═══ WARNING OVERLAY ═══ */
+        .warning-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0;
+            background: rgba(0, 0, 0, 0.9);
+            transition: opacity 0.3s;
+        }
+
+        .warning-overlay.active {
+            opacity: 1;
+        }
+
+        .warning-glitch {
+            font-family: var(--font-mono);
+            font-size: clamp(24px, 6vw, 72px);
+            font-weight: 900;
+            color: var(--red);
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            text-shadow:
+                0 0 10px var(--red),
+                0 0 20px var(--red),
+                0 0 40px var(--red),
+                0 0 80px var(--red);
+            animation: warningsha256 0.15s infinite, glitchText 0.1s infinite;
+        }
+
+        .warning-sub {
+            font-family: var(--font-mono);
+            font-size: clamp(12px, 2vw, 20px);
+            color: #fff;
+            margin-top: 20px;
+            letter-spacing: 4px;
+            opacity: 0.8;
+        }
+
+        .warning-skull {
+            font-size: clamp(40px, 10vw, 100px);
+            margin-bottom: 20px;
+            animation: skullShake 0.1s infinite;
+        }
+
+        @keyframes warningsha256 {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes glitchText {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(2px, -2px);
+            }
+
+            60% {
+                transform: translate(-2px, -2px);
+            }
+
+            80% {
+                transform: translate(2px, 2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes skullShake {
+
+            0%,
+            100% {
+                transform: rotate(-5deg);
+            }
+
+            50% {
+                transform: rotate(5deg);
+            }
+        }
+
+        /* ═══ GITHUB PANEL ═══ */
+        .github-panel {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            position: fixed;
+            top: 50%;
+            left: 65px;
+            transform: translateY(-50%) translateX(-20px);
+            width: 300px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .github-panel.visible {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .gh-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .gh-bar-icon {
+            width: 14px;
+            height: 14px;
+            fill: var(--text-muted);
+        }
+
+        .gh-bar-title {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .gh-content {
+            padding: 20px 16px;
+        }
+
+        .gh-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .gh-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            object-fit: cover;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .gh-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .gh-name {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .gh-login {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .gh-bio {
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.5;
+            margin-bottom: 14px;
+            font-style: italic;
+        }
+
+        .gh-stats {
+            display: flex;
+            gap: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .gh-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .gh-stat-num {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .gh-stat-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ═══ DISCORD PANEL ═══ */
+        .discord-panel {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            position: fixed;
+            top: 50%;
+            right: 65px;
+            transform: translateY(-50%) translateX(20px);
+            width: 300px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .discord-panel.visible {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .dc-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .dc-bar-icon {
+            width: 14px;
+            height: 14px;
+            fill: var(--text-muted);
+        }
+
+        .dc-bar-title {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .dc-content {
+            padding: 20px 16px;
+        }
+
+        .dc-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .dc-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            object-fit: cover;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .dc-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dc-name {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .dc-tag {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .dc-status-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dc-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dc-status-dot.online {
+            background: #22c55e;
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+        }
+
+        .dc-status-dot.idle {
+            background: #eab308;
+            box-shadow: 0 0 6px rgba(234, 179, 8, 0.3);
+        }
+
+        .dc-status-dot.dnd {
+            background: var(--red-bright);
+            box-shadow: 0 0 6px var(--red-glow);
+        }
+
+        .dc-status-dot.offline {
+            background: #444;
+        }
+
+        .dc-status-text {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: capitalize;
+        }
+
+        /* ═══ TOAST ═══ */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(10, 10, 10, 0.96);
+            border: 1px solid rgba(176, 16, 48, 0.2);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 11px;
+            color: var(--red);
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0;
+            backdrop-filter: blur(12px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            margin-top: 18px;
+            font-size: 9px;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-sep {
+            color: var(--red);
+            opacity: 0.35;
+        }
+
+        .live-clock {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ═══ ENTRANCE ═══ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+
+        @media (max-width: 1199px) {
+
+            .term-float,
+            .github-panel,
+            .discord-panel {
+                display: none !important;
+            }
+
+        }
+
+        @media (max-height: 850px) {
+            .card {
+                padding: 26px 22px;
+            }
+
+            .avatar-ring {
+                width: 80px;
+                height: 80px;
+            }
+
+            .username {
+                font-size: 28px;
+            }
+
+            .username-glitch {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 14px;
+            }
+
+            .card {
+                padding: 32px 18px;
+            }
+
+            .username {
+                font-size: 26px;
+            }
+
+            .username-glitch {
+                font-size: 26px;
+            }
+
+            .gate-glyph {
+                font-size: 36px;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+
+            .cursor-dot,
+            .cursor-trail {
+                display: none !important;
+            }
+
+            html,
+            body,
+            .link-btn {
+                cursor: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══ GATE ═══ -->
+    <div class="gate" id="gate">
+        <div class="gate-center">
+            <div class="gate-glyph" id="gate-glyph">c!dzq3m#</div>
+            <div class="gate-divider" id="gate-divider"></div>
+            <div class="gate-prompt" id="gate-prompt">click anywhere to enter</div>
+        </div>
+    </div>
+
+    <!-- ═══ OVERLAYS ═══ -->
+    <div class="grain"></div>
+    <div class="scanlines"></div>
+    <div class="warning-overlay" id="warning-overlay">
+        <div class="warning-skull">💀</div>
+        <div class="warning-glitch">ACCESS DENIED</div>
+        <div class="warning-sub">// you can't stop the music</div>
+    </div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="mouse-glow" id="mouse-glow"></div>
+    <canvas id="particles" width="1920" height="1080"></canvas>
+    <div class="toast" id="toast"></div>
+
+    <!-- ═══ GITHUB PANEL ═══ -->
+    <a href="https://github.com/thescy1" target="_blank" rel="noopener" class="github-panel" id="github-panel">
+        <div class="gh-bar">
+            <svg class="gh-bar-icon" viewBox="0 0 24 24">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"></path>
+            </svg>
+            <span class="gh-bar-title" id="gh-bar-title">github.com/thescy1</span>
+        </div>
+        <div class="gh-content">
+            <div class="gh-profile">
+                <img class="gh-avatar" id="gh-avatar" src="" alt="">
+                <div class="gh-meta">
+                    <div class="gh-name" id="gh-name">thescy</div>
+                    <div class="gh-login" id="gh-login">@thescy1</div>
+                </div>
+            </div>
+            <div class="gh-bio" id="gh-bio"></div>
+            <div class="gh-stats">
+                <div class="gh-stat">
+                    <span class="gh-stat-num" id="gh-repos">—</span>
+                    <span class="gh-stat-label">repos</span>
+                </div>
+                <div class="gh-stat">
+                    <span class="gh-stat-num" id="gh-followers">—</span>
+                    <span class="gh-stat-label">followers</span>
+                </div>
+                <div class="gh-stat">
+                    <span class="gh-stat-num" id="gh-following">—</span>
+                    <span class="gh-stat-label">following</span>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <!-- ═══ DISCORD PANEL ═══ -->
+    <a href="https://discord.com/users/1325434535344869420" target="_blank" rel="noopener" class="discord-panel" id="discord-panel">
+        <div class="dc-bar">
+            <svg class="dc-bar-icon" viewBox="0 0 24 24">
+                <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"></path>
+            </svg>
+            <span class="dc-bar-title">thescy</span>
+        </div>
+        <div class="dc-content">
+            <div class="dc-profile">
+                <img class="dc-avatar" id="dc-avatar" src="" alt="">
+                <div class="dc-meta">
+                    <div class="dc-name" id="dc-name">.thescy.</div>
+                    <div class="dc-tag" id="dc-tag">@.thescy.</div>
+                </div>
+            </div>
+            <div class="dc-status-row">
+                <div class="dc-status-dot dnd" id="dc-status-dot"></div>
+                <span class="dc-status-text" id="dc-status-text">do not disturb</span>
+            </div>
+        </div>
+    </a>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="container">
+        <div class="card-outer reveal" data-delay="0">
+            <div class="card" id="card">
+                <div class="deco-top reveal" data-delay="1">
+                    <span class="deco-tag"><thescy></thescy></span>
+                    <span class="deco-coords" id="coords">0x000 : 0x000</span>
+                </div>
+
+                <div class="avatar-section reveal" data-delay="2">
+                    <div class="avatar-ring">
+                        <img class="avatar-img" id="avatar-img" src="" alt="avatar">
+                        <div class="avatar-glitch-layer"></div>
+                        <div class="status-indicator dnd" id="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="profile-info reveal" data-delay="3">
+                    <div class="username-wrap">
+                        <div class="username">thescy</div>
+                        <div class="username-glitch" aria-hidden="true">thescy</div>
+                        <div class="username-glitch" aria-hidden="true">thescy</div>
+                    </div>
+                    <div class="bio" id="bio"><span class="cursor-blink"></span></div>
+                </div>
+
+                <div class="divider reveal" data-delay="4"></div>
+
+                <!-- ═══ MUSIC PLAYER ═══ -->
+                <div class="music-player reveal" data-delay="4" id="music-player">
+                    <div class="music-album">
+                        <img src="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%233d0011%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%23b01030%22 font-size=%2230%22>♫</text></svg>" alt="Album Art" id="album-art" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%233d0011%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%23b01030%22 font-size=%2230%22>♫</text></svg>'">
+                    </div>
+                    <div class="music-info">
+                        <div class="music-title" id="music-title">Kiss&Tell</div>
+                        <div class="music-artist" id="music-artist">GUINEVERE</div>
+                        <div class="music-spotify">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"></path>
+                            </svg>
+                            <span>Spotify</span>
+                        </div>
+                        <div class="music-progress">
+                            <div class="music-progress-bar" id="progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="music-controls">
+                        <span class="music-time" id="music-time">0:00</span>
+                        <button class="music-btn" id="play-btn" onclick="toggleMusic()">
+                            <svg viewBox="0 0 24 24" id="play-icon">
+                                <path d="M8 5v14l11-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <audio id="audio" loop="" preload="auto">
+                    <source src="media/GUINEVERE%20-%20KISS%26TELL%20%5BOfficial%20Video%5D%20%5BjvFOmp6hfPo%5D.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+
+                <div class="links">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer reveal" data-delay="8" style="margin-top: 30px;">
+            <span id="footer-name">thescy</span>
+            <span class="footer-sep">/</span>
+            <span class="live-clock" id="clock">18:20:52</span>
+            <span class="footer-sep">/</span>
+            <span class="visitor-count"><span id="visitor-count">—</span> visitors</span>
+        </div>
+    </div>
+
+    <script>
+        /* ═══ CONSOLE ASCII ART ═══ */
+        console.log('%c' + `
+███████╗██╗     ██╗   ██╗███████╗███████╗███╗   ██╗
+██╔════╝██║     ██║   ██║██╔════╝██╔════╝████╗  ██║
+█████╗  ██║     ██║   ██║█████╗  █████╗  ██╔██╗ ██║
+██╔══╝  ██║     ╚██╗ ██╔╝██╔══╝  ██╔══╝  ██║╚██╗██║
+███████╗███████╗ ╚████╔╝ ███████╗███████╗██║ ╚████║
+╚══════╝╚══════╝  ╚═══╝  ╚══════╝╚══════╝╚═╝  ╚═══╝
+        `, 'color: #b01030; font-family: monospace; font-size: 10px;');
+        console.log('%c github.com/thescy1 ', 'background: #b01030; color: #fff; padding: 5px 10px; border-radius: 3px; font-family: monospace;');
+
+        const DISCORD_IDS = ['1325434535344869420'];
+        let currentProfileIndex = 0;
+        let discordProfiles = {};
+        const CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%&';
+        let gateOpen = false;
+
+        /* ═══ TERM DATA ═══ */
+        const TERM_DATA = [
+            { word: 'Misanthropy', def: 'a generalized dislike, distrust, disgust, contempt, or hatred of the human species, human nature, or society.', pos: 'top:4.5vh;left:38px', w: 230, delay: 0, path: '~/mindset' },
+            { word: 'Euphoria', def: 'an intense state of excitement, happiness, and self-confidence.', pos: 'top:4vh;right:38px', w: 195, delay: 500, path: '~/euphoria' },
+            { word: 'Manipulation', def: 'the action of making someone act or feel a certain way through indirect, deceptive, or underhanded tactics.', pos: 'bottom:3.2vh;left:38px', w: 220, delay: 300, path: '~/manipulation' },
+            { word: 'Obsessed', def: 'the key ingredient to success. if you aren\'t obsessed with what you do, you should do something else.', pos: 'bottom:2.8vh;right:38px', w: 210, delay: 450, path: '~/obsessed' }
+        ];
+
+        function createTerminals() {
+            TERM_DATA.forEach((t, idx) => {
+                const el = document.createElement('div');
+                el.className = 'term-float';
+                el.style.cssText = t.pos + ';width:' + t.w + 'px';
+                el.style.setProperty('--rot', ((Math.random() - 0.5) * 1.4).toFixed(2) + 'deg');
+                el.style.setProperty('--glitch-delay', (Math.random() * 6).toFixed(1) + 's');
+
+                el.innerHTML = '<div class="term-path">' + (t.path || '~/thescy') + '</div>' +
+                    '<div class="term-accent"></div>' +
+                    '<div class="term-word" data-text="' + t.word + '">' + t.word + '</div>' +
+                    '<div class="term-def">' + t.def + '</div>';
+
+                document.body.appendChild(el);
+            });
+        }
+
+        createTerminals();
+
+        /* ═══ GATE ═══ */
+        (function () {
+            const gate = document.getElementById('gate');
+            const glyph = document.getElementById('gate-glyph');
+            const divider = document.getElementById('gate-divider');
+            const prompt = document.getElementById('gate-prompt');
+            const target = 'thescy';
+
+            const scrambleInterval = setInterval(() => {
+                let t = '';
+                for (let i = 0; i < 8; i++) t += CHARS[Math.floor(Math.random() * CHARS.length)];
+                glyph.textContent = t;
+            }, 50);
+
+            const ready = document.fonts ? document.fonts.ready : new Promise(r => window.addEventListener('load', r));
+            ready.then(() => {
+                setTimeout(() => {
+                    clearInterval(scrambleInterval);
+                    let f = 0;
+                    const resolve = setInterval(() => {
+                        let t = '';
+                        for (let i = 0; i < target.length; i++) {
+                            t += i <= f ? target[i] : CHARS[Math.floor(Math.random() * CHARS.length)];
+                        }
+                        glyph.textContent = t;
+                        f++;
+                        if (f >= target.length) {
+                            clearInterval(resolve);
+                            setTimeout(() => {
+                                divider.classList.add('visible');
+                                setTimeout(() => {
+                                    prompt.classList.add('visible');
+                                }, 300);
+                            }, 200);
+                        }
+                    }, 80);
+                }, 700);
+            });
+
+            gate.addEventListener('click', () => {
+                if (gateOpen) return;
+                gateOpen = true;
+
+                let count = 0;
+                const glitchIv = setInterval(() => {
+                    let t = '';
+                    for (let i = 0; i < 6; i++) t += CHARS[Math.floor(Math.random() * CHARS.length)];
+                    glyph.textContent = t;
+                    count++;
+                    if (count >= 5) {
+                        clearInterval(glitchIv);
+                        glyph.textContent = target;
+                    }
+                }, 50);
+
+                setTimeout(() => gate.classList.add('hidden'), 250);
+
+                setTimeout(() => {
+                    startEntrance();
+                    fetchAllDiscord();
+                    startProfileRotation();
+                    // Autoplay music when gate is clicked
+                    setTimeout(() => {
+                        startMusic();
+                    }, 800);
+                }, 500);
+
+                /* Show terminals with stagger */
+                const terms = document.querySelectorAll('.term-float');
+                terms.forEach((el, idx) => {
+                    const d = TERM_DATA[idx];
+                    setTimeout(() => {
+                        el.classList.add('visible');
+                    }, 1200 + (d ? d.delay : idx * 150));
+                });
+
+                /* Show panels with stagger */
+                setTimeout(() => {
+                    document.getElementById('github-panel').classList.add('visible');
+                    fetchGitHub();
+                }, 1000);
+                setTimeout(() => {
+                    document.getElementById('discord-panel').classList.add('visible');
+                }, 1200);
+
+                /* Start title animation */
+                setTimeout(() => {
+                    startTitleAnimation();
+                }, 300);
+            });
+
+        })();
+
+        /* ═══ ENTRANCE ═══ */
+        function startEntrance() {
+            document.querySelectorAll('.reveal').forEach(el => {
+                const delay = parseInt(el.dataset.delay) * 80 + 100;
+                setTimeout(() => el.classList.add('visible'), delay);
+            });
+            setTimeout(startTyping, 400);
+        }
+
+        /* ═══ TYPING ═══ */
+        function startTyping() {
+            const bio = document.getElementById('bio');
+            const text = 'hayatsız lol oynayan birisi';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    const cursor = bio.querySelector('.cursor-blink');
+                    bio.insertBefore(document.createTextNode(text[i]), cursor);
+                    i++;
+                    setTimeout(type, 25 + Math.random() * 30);
+                }
+            }
+            type();
+        }
+
+        /* ═══ TITLE TYPING ═══ */
+        let titleAnimStarted = false;
+
+        function startTitleAnimation() {
+            if (titleAnimStarted) return;
+            titleAnimStarted = true;
+
+            const text = 'thescy owns you';
+            let charIndex = 0;
+            let phase = 'typing';
+            let cursorVisible = true;
+
+            setInterval(() => {
+                cursorVisible = !cursorVisible;
+            }, 500);
+
+            function getTitle() {
+                const partial = text.slice(0, charIndex);
+                return partial + (cursorVisible ? '_' : (partial ? '' : '_'));
+            }
+
+            function updateDisplay() {
+                const t = getTitle();
+                document.title = t || '_';
+            }
+
+            setInterval(updateDisplay, 100);
+
+            function step() {
+                if (phase === 'typing') {
+                    charIndex++;
+                    if (charIndex > text.length) {
+                        charIndex = text.length;
+                        phase = 'pause';
+                        setTimeout(step, 3000);
+                    } else {
+                        setTimeout(step, 280 + Math.random() * 120);
+                    }
+                } else if (phase === 'pause') {
+                    phase = 'deleting';
+                    step();
+                } else if (phase === 'deleting') {
+                    charIndex--;
+                    if (charIndex <= 0) {
+                        charIndex = 0;
+                        phase = 'wait';
+                        setTimeout(step, 1200);
+                    } else {
+                        setTimeout(step, 80 + Math.random() * 40);
+                    }
+                } else if (phase === 'wait') {
+                    phase = 'typing';
+                    step();
+                }
+            }
+
+            updateDisplay();
+            setTimeout(step, 600);
+        }
+
+        /* ═══ DISCORD / LANYARD ═══ */
+        function fetchAllDiscord() {
+            DISCORD_IDS.forEach(id => fetchOneDiscord(id));
+        }
+
+        function fetchOneDiscord(id) {
+            fetch('https://api.lanyard.rest/v1/users/' + id)
+                .then(r => r.json())
+                .then(json => {
+                    if (!json.success) return;
+                    const d = json.data;
+                    discordProfiles[id] = d;
+                    
+                    // If it's the current profile being fetched, update UI immediately
+                    if (id === DISCORD_IDS[currentProfileIndex]) {
+                        updateDiscordUI(d);
+                    }
+                })
+                .catch(() => { });
+        }
+
+        function updateDiscordUI(d) {
+            const id = d.discord_user.id;
+            const avatarHash = d.discord_user.avatar;
+            let avatarUrl;
+            if (avatarHash) {
+                const ext = avatarHash.startsWith('a_') ? 'gif' : 'png';
+                avatarUrl = 'https://cdn.discordapp.com/avatars/' + id + '/' + avatarHash + '.' + ext + '?size=256';
+            } else {
+                const defaultIndex = (BigInt(id) >> 22n) % 6n;
+                avatarUrl = 'https://cdn.discordapp.com/embed/avatars/' + defaultIndex + '.png';
+            }
+            
+            document.getElementById('avatar-img').src = avatarUrl;
+            document.getElementById('status-dot').className = 'status-indicator ' + d.discord_status;
+            
+            // Update Center Username
+            const username = d.discord_user.display_name || d.discord_user.username;
+            document.querySelector('.username').textContent = username;
+            document.querySelectorAll('.username-glitch').forEach(el => el.textContent = username);
+
+            // Update Discord Panel
+            document.getElementById('dc-avatar').src = avatarUrl;
+            document.getElementById('dc-name').textContent = username;
+            document.getElementById('dc-tag').textContent = '@' + d.discord_user.username;
+            document.getElementById('dc-status-dot').className = 'dc-status-dot ' + d.discord_status;
+            const statusTexts = { online: 'online', idle: 'idle', dnd: 'do not disturb', offline: 'offline' };
+            document.getElementById('dc-status-text').textContent = statusTexts[d.discord_status] || d.discord_status;
+            
+            // Update Panel Link
+            document.getElementById('discord-panel').href = 'https://discord.com/users/' + id;
+        }
+
+        function startProfileRotation() {
+            setInterval(() => {
+                const card = document.getElementById('card');
+                const avatarSection = document.querySelector('.avatar-section');
+                
+                // Add glitch classes
+                card.classList.add('switching');
+                avatarSection.classList.add('switching');
+                
+                setTimeout(() => {
+                    currentProfileIndex = (currentProfileIndex + 1) % DISCORD_IDS.length;
+                    const nextId = DISCORD_IDS[currentProfileIndex];
+                    if (discordProfiles[nextId]) {
+                        updateDiscordUI(discordProfiles[nextId]);
+                    }
+                }, 150);
+
+                setTimeout(() => {
+                    card.classList.remove('switching');
+                    avatarSection.classList.remove('switching');
+                }, 400);
+            }, 5000);
+        }
+
+        setInterval(fetchAllDiscord, 30000);
+
+        /* ═══ GITHUB API ═══ */
+        const GITHUB_USERNAME = 'thescy1';
+        function fetchGitHub() {
+            fetch('https://api.github.com/users/' + GITHUB_USERNAME)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.message) return; // Rate limited or error
+                    document.getElementById('gh-avatar').src = data.avatar_url;
+                    document.getElementById('gh-name').textContent = data.name || data.login;
+                    document.getElementById('gh-login').textContent = '@' + data.login;
+                    document.getElementById('gh-bio').textContent = data.bio || '';
+                    document.getElementById('gh-repos').textContent = data.public_repos;
+                    document.getElementById('gh-followers').textContent = data.followers;
+                    document.getElementById('gh-following').textContent = data.following;
+                })
+                .catch(() => { });
+        }
+
+        /* ═══ CURSOR + TRAIL ═══ */
+        const dot = document.getElementById('cursor-dot');
+        let mouseX = -100, mouseY = -100;
+
+        const TRAIL_COUNT = 7;
+        const trails = [];
+        for (let i = 0; i < TRAIL_COUNT; i++) {
+            const t = document.createElement('div');
+            t.className = 'cursor-trail';
+            t.style.opacity = (1 - i / TRAIL_COUNT) * 0.25;
+            const s = 3 - i * 0.3;
+            t.style.width = s + 'px';
+            t.style.height = s + 'px';
+            document.body.appendChild(t);
+            trails.push({ el: t, x: -100, y: -100 });
+        }
+
+        document.addEventListener('mousemove', e => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+            document.getElementById('mouse-glow').style.left = mouseX + 'px';
+            document.getElementById('mouse-glow').style.top = mouseY + 'px';
+        });
+
+        function animateTrails() {
+            let px = mouseX, py = mouseY;
+            trails.forEach(t => {
+                t.x += (px - t.x) * 0.22;
+                t.y += (py - t.y) * 0.22;
+                t.el.style.left = t.x + 'px';
+                t.el.style.top = t.y + 'px';
+                px = t.x;
+                py = t.y;
+            });
+            requestAnimationFrame(animateTrails);
+        }
+        animateTrails();
+
+        document.querySelectorAll('a, button, .link-btn').forEach(el => {
+            el.addEventListener('mouseenter', () => dot.classList.add('hover'));
+            el.addEventListener('mouseleave', () => dot.classList.remove('hover'));
+        });
+
+        /* ═══ TEXT SCRAMBLE ═══ */
+        const SC = '!@#$%^&*()_+-=[]{}|;:,.<>?0123456789';
+        document.querySelectorAll('.scramble-text').forEach(el => {
+            const orig = el.dataset.text;
+            el.closest('.link-btn').addEventListener('mouseenter', () => {
+                let iter = 0;
+                const iv = setInterval(() => {
+                    el.textContent = orig.split('').map((c, i) =>
+                        i < iter ? orig[i] : SC[Math.floor(Math.random() * SC.length)]
+                    ).join('');
+                    iter += 0.5;
+                    if (iter >= orig.length) { clearInterval(iv); el.textContent = orig; }
+                }, 30);
+            });
+        });
+
+        /* ═══ CARD TILT ═══ */
+        const card = document.getElementById('card');
+        document.addEventListener('mousemove', e => {
+            const r = card.getBoundingClientRect();
+            const dx = (e.clientX - r.left - r.width / 2) / r.width;
+            const dy = (e.clientY - r.top - r.height / 2) / r.height;
+            card.style.transform = 'perspective(800px) rotateX(' + (dy * -1.5) + 'deg) rotateY(' + (dx * 1.5) + 'deg)';
+        });
+        document.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
+        });
+
+        /* ═══ COORDS ═══ */
+        const coordsEl = document.getElementById('coords');
+        document.addEventListener('mousemove', e => {
+            const hx = ('000' + Math.floor(e.clientX / 4).toString(16)).slice(-3);
+            const hy = ('000' + Math.floor(e.clientY / 4).toString(16)).slice(-3);
+            coordsEl.textContent = '0x' + hx + ' : 0x' + hy;
+        });
+
+        /* ═══ MUSIC PLAYER ═══ */
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const progressBar = document.getElementById('progress-bar');
+        const musicTime = document.getElementById('music-time');
+        let isPlaying = false;
+
+        // Autostart music function
+        function startMusic() {
+            audio.volume = 0.5;
+            audio.play().then(() => {
+                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                isPlaying = true;
+            }).catch(e => {
+                console.log('Autoplay blocked, click to play');
+            });
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                // Show ACCESS DENIED warning instead of stopping
+                showAccessDenied();
+            } else {
+                audio.volume = 0.5;
+                audio.play().catch(e => console.log('Audio play failed:', e));
+                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                isPlaying = true;
+            }
+        }
+
+        function showAccessDenied() {
+            const warning = document.getElementById('warning-overlay');
+            warning.classList.add('active');
+            setTimeout(() => {
+                warning.classList.remove('active');
+            }, 1500);
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = percent + '%';
+
+                const mins = Math.floor(audio.currentTime / 60);
+                const secs = Math.floor(audio.currentTime % 60);
+                musicTime.textContent = mins + ':' + String(secs).padStart(2, '0');
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            progressBar.style.width = '0%';
+            musicTime.textContent = '0:00';
+        });
+
+        /* ═══ DISCORD REDIRECT ═══ */
+        function copyDiscord(e) {
+            e.preventDefault();
+
+            const handle = 'xk3j';
+            const discordUrl = 'https://discord.com/users/1325434535344869420';
+
+            const h = document.getElementById('discord-handle');
+            const a = document.getElementById('discord-arrow');
+            h.textContent = 'redirecting...';
+            h.style.color = 'var(--red)';
+            a.textContent = '→';
+
+            setTimeout(() => {
+                window.open(discordUrl, '_blank');
+                setTimeout(() => {
+                    h.textContent = '@' + handle;
+                    h.style.color = '';
+                    a.innerHTML = '--->';
+                }, 500);
+            }, 500);
+        }
+
+        /* ═══ LIVE CLOCK ═══ */
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        /* ═══ VISITOR COUNTER ═══ */
+        const COUNTER_API = 'counter.php';
+        const VISITED_KEY = 'thescy_visited';
+
+        function fetchVisitorCount() {
+            fetch(COUNTER_API)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('visitor-count').textContent = data.count.toLocaleString();
+                })
+                .catch(() => {
+                    document.getElementById('visitor-count').textContent = '—';
+                });
+        }
+
+        function incrementVisitorCount() {
+            // Only count once per session
+            if (sessionStorage.getItem(VISITED_KEY)) {
+                return;
+            }
+            sessionStorage.setItem(VISITED_KEY, 'true');
+
+            fetch(COUNTER_API, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('visitor-count').textContent = data.count.toLocaleString();
+                })
+                .catch(() => { });
+        }
+
+        // Initialize on page load
+        fetchVisitorCount();
+
+        // Increment when gate is clicked (actual visit)
+        document.getElementById('gate').addEventListener('click', function () {
+            incrementVisitorCount();
+        }, { once: true });
+
+        /* ═══ PARTICLES ═══ */
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function createParticle() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                size: Math.random() * 1.5 + 0.5,
+                opacity: Math.random() * 0.3 + 0.1
+            };
+        }
+
+        for (let i = 0; i < 50; i++) {
+            particles.push(createParticle());
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(176, 16, 48, ${p.opacity})`;
+                ctx.fill();
+            });
+
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+
+        /* ═══ TOAST ═══ */
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script><div class="term-float" style="top: 4.5vh; left: 38px; width: 230px; --rot: -0.39deg; --glitch-delay: 0.1s;"><div class="term-path">~/mindset</div><div class="term-accent"></div><div class="term-word" data-text="Misanthropy">Misanthropy</div><div class="term-def">a generalized dislike, distrust, disgust, contempt, or hatred of the human species, human nature, or society.</div></div><div class="term-float" style="top: 4vh; right: 38px; width: 195px; --rot: 0.19deg; --glitch-delay: 3.3s;"><div class="term-path">~/euphoria</div><div class="term-accent"></div><div class="term-word" data-text="Euphoria">Euphoria</div><div class="term-def">an intense state of excitement, happiness, and self-confidence.</div></div><div class="term-float" style="bottom: 3.2vh; left: 38px; width: 220px; --rot: 0.22deg; --glitch-delay: 2.6s;"><div class="term-path">~/manipulation</div><div class="term-accent"></div><div class="term-word" data-text="Manipulation">Manipulation</div><div class="term-def">the action of making someone act or feel a certain way through indirect, deceptive, or underhanded tactics.</div></div><div class="term-float" style="bottom: 2.8vh; right: 38px; width: 210px; --rot: 0.09deg; --glitch-delay: 2.7s;"><div class="term-path">~/obsessed</div><div class="term-accent"></div><div class="term-word" data-text="Obsessed">Obsessed</div><div class="term-def">the key ingredient to success. if you aren't obsessed with what you do, you should do something else.</div></div><div class="cursor-trail" style="opacity: 0.25; width: 3px; height: 3px; left: -100px; top: -100px;"></div><div class="cursor-trail" style="opacity: 0.214286; width: 2.7px; height: 2.7px; left: -100px; top: -100px;"></div><div class="cursor-trail" style="opacity: 0.178571; width: 2.4px; height: 2.4px; left: -100px; top: -100px;"></div><div class="cursor-trail" style="opacity: 0.142857; width: 2.1px; height: 2.1px; left: -100px; top: -100px;"></div><div class="cursor-trail" style="opacity: 0.107143; width: 1.8px; height: 1.8px; left: -100px; top: -100px;"></div><div class="cursor-trail" style="opacity: 0.0714286; width: 1.5px; height: 1.5px; left: -100px; top: -100px;"></div><div class="cursor-trail" style="opacity: 0.0357143; width: 1.2px; height: 1.2px; left: -100px; top: -100px;"></div>
+
+
+
+</body></html>
